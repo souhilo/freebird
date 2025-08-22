@@ -1,7 +1,11 @@
+export const dynamic = "force-dynamic";
+
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 export const fetchOffres = async () => {
-  const offres = await fetch(`${BASE_URL}/api/offres`);
+  const offres = await fetch(`${BASE_URL}/api/offres`, {
+    cache: "no-store",
+  });
 
   return offres?.json();
 };

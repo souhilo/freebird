@@ -1,6 +1,7 @@
 "use client";
 
-import { NextResponse } from "next/server";
+export const dynamic = "force-dynamic";
+
 import { useEffect, useRef, useState } from "react";
 
 export default function CVForm({
@@ -85,6 +86,7 @@ export default function CVForm({
       fetch("/api/candidatures", {
         method: "POST",
         body: formData,
+        cache: "no-store",
       })
         .then(async (res) => {
           const response = await res?.json();

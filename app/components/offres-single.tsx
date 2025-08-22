@@ -1,9 +1,13 @@
 import CVForm from "./cv-form";
 
+export const dynamic = "force-dynamic";
+
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 const fetchOffre = async (id: string) => {
-  const offre = await fetch(`${BASE_URL}/api/offres/${id}`);
+  const offre = await fetch(`${BASE_URL}/api/offres/${id}`, {
+    cache: "no-store",
+  });
 
   const fetchedOffre = await offre?.json();
 
@@ -11,7 +15,9 @@ const fetchOffre = async (id: string) => {
 };
 
 const fetchOffres = async () => {
-  const offres = await fetch(`${BASE_URL}/api/offres`);
+  const offres = await fetch(`${BASE_URL}/api/offres`, {
+    cache: "no-store",
+  });
 
   const fetchedOffres = (await offres?.json())?.map((o: any) => ({
     id: o?.id,
