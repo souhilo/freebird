@@ -299,7 +299,7 @@ export default function CVForm({
                             name="poste"
                             disabled
                             defaultValue={poste}
-                            value={poste}
+                            // value={poste}
                           >
                             {offres?.map((o) => (
                               <option key={o?.id} value={o?.title}>

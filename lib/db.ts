@@ -19,6 +19,9 @@ export async function initDb() {
     port: parseInt(process.env.DB_PORT!),
     user: process.env.DB_USER!,
     password: process.env.DB_PASSWORD!,
+    ssl: {
+      ca: process.env.DB_CERT?.replace(/\\n/g, "\n"),
+    },
   });
 
   await connection.query(
@@ -35,6 +38,11 @@ export async function initDb() {
       host: process.env.DB_HOST,
       port: parseInt(process.env.DB_PORT!),
       dialect: "mysql",
+      dialectOptions: {
+        ssl: {
+          ca: process.env.DB_CERT?.replace(/\\n/g, "\n"),
+        },
+      },
     }
   );
 
@@ -47,5 +55,6 @@ export async function initDb() {
   db.RefreshToken.belongsTo(db.Account);
 
   await sequelize.sync();
+
   initialized = true;
 }
