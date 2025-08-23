@@ -4,6 +4,7 @@ import { refreshTokenModel } from "@/lib/models/refresh-token.model";
 import { candidatureModel } from "@/lib/models/candidature.model";
 import { offreModel } from "@/lib/models/offre.model";
 import mysql from "mysql2/promise";
+import mysql2 from "mysql2";
 
 let initialized = false;
 let sequelize: Sequelize;
@@ -38,6 +39,7 @@ export async function initDb() {
       host: process.env.DB_HOST,
       port: parseInt(process.env.DB_PORT!),
       dialect: "mysql",
+      dialectModule: mysql2,
       dialectOptions: {
         ssl: {
           ca: process.env.DB_CERT?.replace(/\\n/g, "\n"),
