@@ -13,6 +13,8 @@ export const fetchOffres = async () => {
 export default async function Offres() {
   const offres = await fetchOffres();
 
+  const availableOffres = offres?.filter((o: any) => o?.status !== "trash");
+
   return (
     <div className="bg-[rgba(0,53,140,0.05)]">
       <div className="container">
@@ -26,7 +28,7 @@ export default async function Offres() {
           </p>
           {/* STARTING OFFRES SECTION */}
           <div className="bg-blue-light py-3 py-md-5 ">
-            {offres?.map?.(
+            {availableOffres?.map?.(
               ({
                 id,
                 title,
