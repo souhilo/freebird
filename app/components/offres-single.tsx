@@ -43,7 +43,7 @@ export default async function OffreSingle({ id }: { id: string }) {
           </p>
           {/* OFFRE CONTENT */}
           <div className="py-3 py-md-5 ">
-            <div className="content py-5">
+            <div className="content-single-offre content py-5">
               <div className="container">
                 <div className="row profil-recherche py-3">
                   <div className="col col-md-9 d-flex justify-content-center flex-column mx-auto">

@@ -1822,3 +1822,7 @@ button:not(:disabled),
     font-size: 3rem;
   }
 }
+
+.content-single-offre ul {
+  list-style: disc;
+}

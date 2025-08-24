@@ -1,3 +1,4 @@
+import { put } from "@vercel/blob";
 import { NextRequest, NextResponse } from "next/server";
 import { authorize } from "@/lib/authorize";
 import { validateRequest } from "@/lib/validate-request";
@@ -21,31 +22,39 @@ export async function POST(req: NextRequest) {
 
   if (!file || !file.name) {
     return NextResponse.json(
-      { message: "Validation error", errors: "CV file is required" },
+      { message: "Validation error", errors: "CV obligatoire" },
       { status: 400 }
     );
   }
 
+  // Validate file extension
   const allowedExt = [".pdf", ".doc", ".docx"];
   const ext = file.name.substring(file.name.lastIndexOf("."));
+
   if (!allowedExt.includes(ext.toLowerCase())) {
     return NextResponse.json(
-      { message: "Validation error", errors: "Invalid file type" },
+      { message: "Validation error", errors: "Extension invalide" },
       { status: 400 }
     );
   }
 
-  const buffer = new Uint8Array(await file.arrayBuffer());
-  const name = `${Date.now()}-${file.name}`;
-  const fs = await import("fs/promises");
-  await fs.writeFile(`./public/uploads/${name}`, buffer);
+  // Upload to Vercel blob
+  const buffer = Buffer.from(await file.arrayBuffer());
+  const blobName = `${Date.now()}-${file.name}`;
+
+  const { url } = await put(`cvs/${blobName}`, buffer, {
+    access: "public", // make file accessible via public URL
+  });
+
   const now = new Date();
+
   const body: any = {
     ...Object.fromEntries(formData.entries()),
     poste: formData.get("poste_hidden") || formData.get("poste"),
     origine: formData.get("origine_candidature"),
     status: "nouvelle",
-    cv: `/uploads/${name}`,
+    cv: url, // store blob URL instead of local path
+    // cv: `/uploads/${name}`,
     month: now.getMonth() + 1,
     year: now.getFullYear(),
   };
