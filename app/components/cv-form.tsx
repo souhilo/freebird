@@ -77,29 +77,32 @@ export default function CVForm({
 
       // Get array values properly (either rely on getAll or your custom query)
       const mobilite = formData.getAll("mobilite[]").map(String);
-      // Optional: remove the raw key if you don’t want it in `data`
-      // formData.delete("mobilite[]");
 
-      const data = Object.fromEntries(formData.entries());
-      data.mobilite_geographique = mobilite.join(",");
+      formData.delete("mobilite[]"); // optional cleanup
+      formData.append("mobilite_geographique", mobilite.join(","));
 
-      fetch("/api/candidatures", {
-        method: "POST",
-        body: formData,
-        cache: "no-store",
-      })
-        .then(async (res) => {
-          const response = await res?.json();
+      console.log("FormData entries:");
+      Array.from(formData.entries()).forEach(([key, value]) => {
+        console.log(key, value);
+      });
 
-          if (res?.status === 400) {
-            setValidationErrors(`${response?.message} : ${response?.errors}`);
-          } else {
-            return response;
-          }
-        })
-        .catch((e) => {
-          console.log({ e });
+      try {
+        const res = await fetch("/api/candidatures", {
+          method: "POST",
+          body: formData,
+          cache: "no-store",
         });
+
+        const response = await res?.json();
+
+        if (res?.status === 400) {
+          setValidationErrors(`${response?.message} : ${response?.errors}`);
+        } else {
+          return response;
+        }
+      } catch (e) {
+        console.log({ e });
+      }
     };
 
     form.addEventListener("submit", handleSubmit);
