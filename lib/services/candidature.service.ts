@@ -57,11 +57,12 @@ async function getStats(poste: string) {
     res[m] = await db.Candidature.count({
       where: {
         month: { [Op.eq]: m },
-        year: { [Op.eq]: 2022 },
+        year: { [Op.eq]: 2025 },
         ...(poste !== "all" ? { poste: { [Op.eq]: poste } } : {}),
       },
     });
   }
+
   return res;
 }
 

@@ -2,7 +2,9 @@
 
 export const dynamic = "force-dynamic";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
 
 export default function CVForm({
   poste,
@@ -12,7 +14,10 @@ export default function CVForm({
   offres: { id: number; title: string }[];
 }) {
   const formRef = useRef<HTMLFormElement | null>(null);
-  const [validationErrors, setValidationErrors] = useState("");
+  const [validationErrors, setValidationErrors] = useState<
+    Record<string, string>
+  >({});
+  const router = useRouter();
 
   // Move span on input focus (scoped to the form instead of document)
   useEffect(() => {
@@ -23,6 +28,7 @@ export default function CVForm({
       const target = e.target as HTMLElement;
       target.closest(".inputDiv")?.classList.add("move-span");
     };
+
     const handleBlur = (e: Event) => {
       const t = e.target as
         | HTMLInputElement
@@ -63,6 +69,7 @@ export default function CVForm({
     return () => fileInput?.removeEventListener("change", handleFileChange);
   }, []);
 
+  // ✅ handle submit
   // Form submission (attach listener correctly)
   useEffect(() => {
     const form = document.getElementById(
@@ -75,16 +82,10 @@ export default function CVForm({
 
       const formData = new FormData(form);
 
-      // Get array values properly (either rely on getAll or your custom query)
+      // collect mobilite[]
       const mobilite = formData.getAll("mobilite[]").map(String);
-
       formData.delete("mobilite[]"); // optional cleanup
       formData.append("mobilite_geographique", mobilite.join(","));
-
-      console.log("FormData entries:");
-      Array.from(formData.entries()).forEach(([key, value]) => {
-        console.log(key, value);
-      });
 
       try {
         const res = await fetch("/api/candidatures", {
@@ -96,18 +97,23 @@ export default function CVForm({
         const response = await res?.json();
 
         if (res?.status === 400) {
-          setValidationErrors(`${response?.message} : ${response?.errors}`);
+          setValidationErrors(response.errors || {});
+          toast.error("Erreur de validation !");
         } else {
-          return response;
+          toast.success("Votre candidature a été envoyée avec succès 🎉");
+          form.reset();
+          setValidationErrors({});
+          setTimeout(() => router.push("/emploi"), 2500);
         }
       } catch (e) {
         console.log({ e });
+        toast.error("Une erreur est survenue !");
       }
     };
 
     form.addEventListener("submit", handleSubmit);
     return () => form.removeEventListener("submit", handleSubmit);
-  }, [poste]);
+  }, [poste, router]);
 
   return (
     <section id="offre-spontanee-cv" className="pb-12">
@@ -147,7 +153,7 @@ export default function CVForm({
                     <h3 className="titre_1 !items-start pt-6">Identité</h3>
                     <div className="checkDiv">
                       <p>
-                        <label>Désignation :</label>
+                        <label>Désignation* :</label>
                         <span
                           className="wpcf7-form-control-wrap"
                           data-name="designation"
@@ -196,16 +202,20 @@ export default function CVForm({
                             size={40}
                             maxLength={400}
                             className="wpcf7-form-control wpcf7-text wpcf7-validates-as-required inputContact"
-                            aria-required="true"
-                            aria-invalid="false"
                             defaultValue=""
                             type="text"
                             name="nom"
+                            required
                           />
                         </span>
                         <span className="iconContact nomPicto" />
                         <span className="floating-label">Nom*</span>
                       </p>
+                      {validationErrors.nom && (
+                        <p className="text-red-600 text-sm mt-1">
+                          {validationErrors.nom}
+                        </p>
+                      )}
                     </div>
                     <div className="inputDiv">
                       <p>
@@ -217,16 +227,20 @@ export default function CVForm({
                             size={40}
                             maxLength={400}
                             className="wpcf7-form-control wpcf7-text wpcf7-validates-as-required inputContact"
-                            aria-required="true"
-                            aria-invalid="false"
                             defaultValue=""
                             type="text"
                             name="prenom"
+                            required
                           />
                         </span>
                         <span className="iconContact prenomPicto" />
                         <span className="floating-label">Prénom*</span>
                       </p>
+                      {validationErrors.prenom && (
+                        <p className="text-red-600 text-sm mt-1">
+                          {validationErrors.prenom}
+                        </p>
+                      )}
                     </div>
                     <h3 className="titre_1 !items-start pt-6">Coordonnées</h3>
                     <div className="inputDiv">
@@ -239,16 +253,20 @@ export default function CVForm({
                             size={40}
                             maxLength={400}
                             className="wpcf7-form-control wpcf7-email wpcf7-validates-as-required wpcf7-text wpcf7-validates-as-email inputContact"
-                            aria-required="true"
-                            aria-invalid="false"
                             defaultValue=""
                             type="email"
                             name="email"
+                            required
                           />
                         </span>
                         <span className="iconContact emailPicto" />
                         <span className="floating-label">Email*</span>
                       </p>
+                      {validationErrors.email && (
+                        <p className="text-red-600 text-sm mt-1">
+                          {validationErrors.email}
+                        </p>
+                      )}
                     </div>
                     <div className="inputDiv">
                       <p>
@@ -258,18 +276,22 @@ export default function CVForm({
                         >
                           <select
                             className="wpcf7-form-control wpcf7-select wpcf7-validates-as-required inputContact"
-                            aria-required="true"
-                            aria-invalid="false"
                             name="pays"
-                            defaultValue="Algérie"
+                            defaultValue=""
+                            required
                           >
+                            <option value="">Pays*</option>
                             <option value="Algérie">Algérie</option>
                             <option value="France">France</option>
-                            <option value="Tunisie">Tunisie</option>
                           </select>
                         </span>
                         <span className="iconContact paysPicto" />
                       </p>
+                      {validationErrors.pays && (
+                        <p className="text-red-600 text-sm mt-1">
+                          {validationErrors.pays}
+                        </p>
+                      )}
                     </div>
                     <div className="inputDiv">
                       <p>
@@ -281,15 +303,13 @@ export default function CVForm({
                             size={40}
                             maxLength={400}
                             className="wpcf7-form-control wpcf7-text wpcf7-validates-as-required inputContact"
-                            aria-required="true"
-                            aria-invalid="false"
                             defaultValue=""
                             type="text"
                             name="ville"
                           />
                         </span>
                         <span className="iconContact villePicto" />
-                        <span className="floating-label">Ville*</span>
+                        <span className="floating-label">Ville</span>
                       </p>
                     </div>
                     <h3 className="titre_1 !items-start pt-6">Candidature</h3>
@@ -304,7 +324,6 @@ export default function CVForm({
                             name="poste"
                             disabled
                             defaultValue={poste}
-                            // value={poste}
                           >
                             {offres?.map((o) => (
                               <option key={o?.id} value={o?.title}>
@@ -315,6 +334,11 @@ export default function CVForm({
                         </span>
                         <span className="iconContact fonctionPicto" />
                       </p>
+                      {validationErrors.poste && (
+                        <p className="text-red-600 text-sm mt-1">
+                          {validationErrors.poste}
+                        </p>
+                      )}
                     </div>
                     <div className="inputDiv">
                       <input
@@ -350,10 +374,15 @@ export default function CVForm({
                           <span className="iconContact pjPicto" />
                         </label>
                       </p>
+                      {validationErrors.cv && (
+                        <p className="text-red-600 text-sm mt-1">
+                          {validationErrors.cv}
+                        </p>
+                      )}
                     </div>
                     <div className="checkDiv">
                       <p>
-                        <label>Mobilité géographique* :</label>
+                        <label>Mobilité géographique :</label>
                         <span
                           className="wpcf7-form-control-wrap"
                           data-name="mobilite"
@@ -393,10 +422,9 @@ export default function CVForm({
                         >
                           <select
                             className="wpcf7-form-control wpcf7-select wpcf7-validates-as-required inputContact"
-                            aria-required="true"
-                            aria-invalid="false"
                             name="disponibilite"
                             defaultValue=""
+                            required
                           >
                             <option value="">Disponibilité*</option>
                             <option value="Immédiate">Immédiate</option>
@@ -406,6 +434,11 @@ export default function CVForm({
                         </span>
                         <span className="iconContact dispoPicto" />
                       </p>
+                      {validationErrors.disponibilite && (
+                        <p className="text-red-600 text-sm mt-1">
+                          {validationErrors.disponibilite}
+                        </p>
+                      )}
                     </div>
                     <div className="inputDiv">
                       <p>
@@ -421,7 +454,7 @@ export default function CVForm({
                             defaultValue=""
                           >
                             <option value="">
-                              Origine de votre candidature*
+                              Origine de votre candidature
                             </option>
                             <option value="Candidature spontannée">
                               Candidature spontannée
@@ -464,25 +497,6 @@ export default function CVForm({
                       </p>
                     </div>
 
-                    {validationErrors && validationErrors?.length > 0 && (
-                      <div className="w-full flex-[0_0_auto] mt-4">
-                        <p className="text-red-600">{validationErrors}</p>
-                      </div>
-                    )}
-
-                    <div className="wpcf7-response-output" aria-hidden="true" />
-                    <span
-                      className="wpcf7-form-control-wrap CF7_DIST_EMAIL"
-                      data-name="CF7_DIST_EMAIL"
-                    >
-                      <input
-                        type="hidden"
-                        name="CF7_DIST_EMAIL"
-                        className="wpcf7-form-control wpcf7-hidden wpcf7dtx wpcf7dtx-hidden"
-                        aria-invalid="false"
-                        defaultValue="souhil.ben1337@gmail.com"
-                      />
-                    </span>
                     <p>
                       <button
                         type="submit"

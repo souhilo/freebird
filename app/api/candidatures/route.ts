@@ -1,7 +1,7 @@
 import { put } from "@vercel/blob";
 import { NextRequest, NextResponse } from "next/server";
 import { authorize } from "@/lib/authorize";
-import { validateRequest } from "@/lib/validate-request";
+import { validateCandRequest } from "@/lib/validate-request";
 import { candidatureService } from "@/lib/services/candidature.service";
 import Joi from "joi";
 
@@ -22,7 +22,12 @@ export async function POST(req: NextRequest) {
 
   if (!file || !file.name) {
     return NextResponse.json(
-      { message: "Validation error", errors: "CV obligatoire" },
+      {
+        message: "Validation error",
+        errors: {
+          cv: "CV obligatoire.",
+        },
+      },
       { status: 400 }
     );
   }
@@ -33,7 +38,12 @@ export async function POST(req: NextRequest) {
 
   if (!allowedExt.includes(ext.toLowerCase())) {
     return NextResponse.json(
-      { message: "Validation error", errors: "Extension invalide" },
+      {
+        message: "Validation error",
+        errors: {
+          cv: "Extension invalide.",
+        },
+      },
       { status: 400 }
     );
   }
@@ -81,7 +91,7 @@ export async function POST(req: NextRequest) {
     year: Joi.number().required(),
   });
 
-  const validateReq = validateRequest(body, schema);
+  const validateReq = validateCandRequest(body, schema);
 
   if (validateReq instanceof NextResponse) {
     return validateReq;
