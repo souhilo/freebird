@@ -7,6 +7,7 @@ type DestinationCardProps = {
   city: string;
   country: string;
   startingPrice: string;
+  description?: string;
   departureCountry?: string;
   containerClassName?: string;
 };
@@ -19,6 +20,7 @@ function DestinationCard(props: DestinationCardProps) {
     image,
     startingPrice,
     containerClassName,
+    description,
   } = props;
 
   return (
@@ -106,6 +108,11 @@ function DestinationCard(props: DestinationCardProps) {
               Billets à partir de{" "}
               <span className="font-semibold">DZD {startingPrice}</span>
             </p>
+            {description ? (
+              <p className="mt-2 text-xs text-white group-hover:text-[rgb(79,94,113)]">
+                {description}
+              </p>
+            ) : null}
           </div>
           <div className="col-start-1 row-start-1 translate-y-2 bg-white-normal opacity-0 transition duration-300 inset-0 group-hover:translate-y-0 group-hover:opacity-100" />
         </div>
@@ -120,40 +127,40 @@ const destinations: ComponentProps<typeof DestinationCard>[] = [
     country: "Turquie",
     image: "/static/destinations/instanbul.avif",
     startingPrice: "57,420",
+    description:
+      "Explorez la culture unique et les bazars historiques d'Istanbul.",
   },
   {
     city: "Paris",
     country: "France",
     image: "/static/destinations/paris.avif",
     startingPrice: "24,840",
-    containerClassName: "md:col-span-2 lg:col-span-1",
+    description: "Visitez la Ville Lumière, ses musées et sa gastronomie.",
   },
   {
     city: "Tunis",
     country: "Tunisie",
     image: "/static/destinations/tunis.avif",
     startingPrice: "38,160",
+    description: "Découvrez les plages, la médina et le patrimoine tunisien.",
   },
   {
     city: "Marseille",
     country: "France",
     image: "/static/destinations/marseille.avif",
     startingPrice: "17,100",
-    containerClassName: "xl:col-span-2",
+    description:
+      "Profitez du Vieux-Port, des calanques et de la cuisine méditerranéenne.",
   },
-  {
-    city: "Montréal",
-    country: "Canada",
-    image: "/static/destinations/montreak.avif",
-    startingPrice: "130,320",
-    containerClassName: "lg:col-span-2",
-  },
+  // Montréal removed per client request (Canada not served currently)
   {
     city: "Lyon",
     country: "France",
     image: "/static/destinations/lyon.avif",
     startingPrice: "24,480",
     containerClassName: "hidden xl:block",
+    description:
+      "Flânez dans les rues historiques et dégustez la cuisine lyonnaise.",
   },
 ];
 
@@ -168,7 +175,7 @@ export default function PopularDestinations() {
           Ces destinations attrayantes au départ de Alger ont été sélectionnées
           juste pour vous.
         </p>
-        <div className="mb-3 grid [grid-auto-rows:234px] gap-3 md:mb-4 md:grid-cols-3 md:gap-4 lg:grid-cols-4 xl:grid-cols-5">
+        <div className="mb-3 grid [grid-auto-rows:234px] gap-3 md:mb-4 md:grid-cols-3 md:gap-4">
           {destinations?.map((destination, i) => (
             <DestinationCard
               key={i}
@@ -177,56 +184,7 @@ export default function PopularDestinations() {
             />
           ))}
 
-          <div className="row-start-3 md:col-span-3 lg:col-span-2 lg:col-start-3 xl:col-start-4 lg:row-start-2">
-            <div className="flex h-full flex-col rounded-sm bg-white shadow-[0_0_2px_0_#252a3129,0_1px_4px_0_#252a311f] md:flex-row">
-              <div className="relative hidden w-full md:block md:w-[234px] shrink-0">
-                <div className="overflow-hidden relative inline-block max-w-full">
-                  <div className="block max-w-full aspect-square">
-                    <Image
-                      alt=""
-                      src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjM0IiBoZWlnaHQ9IjIzNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2ZXJzaW9uPSIxLjEiLz4="
-                      width={234}
-                      height={234}
-                    />
-                  </div>
-                  <Image
-                    alt="Promo code"
-                    src="/static/promo-img.avif"
-                    width={234}
-                    height={234}
-                    className="absolute m-auto block h-0 max-h-full min-h-full w-0 min-w-full max-w-full border-none p-0 inset-0"
-                  />
-                </div>
-              </div>
-
-              <div className="flex grow flex-col justify-center p-4">
-                <div className="flex flex-col">
-                  <h3 className="m-0 text-[rgb(37,42,49)] text-lg leading-6 font-medium text-start">
-                    Obtenez un code promotionnel d&apos;une valeur de 4500 DZD
-                  </h3>
-                  <div className="mt-3 w-full md:mt-4">
-                    <div className="mt-1">
-                      <p className="text-xs leading-4 font-normal text-[rgb(37,42,49)] m-0">
-                        Invitez vos amis à voyager avec nous et recevez un code
-                        promotionnel de 4500 DZD à chaque fois que l&apos;un
-                        d&apos;entre eux crée un compte et réserve un voyage.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-4 flex sm:justify-start justify-start">
-                  <Link
-                    href="/"
-                    className="space-x-xs rtl:space-x-reverse h-11 text-sm bg-[rgb(232,237,241)] hover:bg-[rgb(220,227,233)] active:bg-[rgb(220,227,233)] text-[rgb(37,42,49)] hover:text-[rgb(24,27,32)] px-4 duration-[.15s] group relative max-w-full items-center justify-center border-none text-center leading-none transition-all [&>*]:align-middle flex-none rounded-md md:rounded-[3px] cursor-pointer hover:no-underline focus:no-underline active:no-underline inline-flex font-medium"
-                  >
-                    <div className="inline-block justify-center flex-1">
-                      Parrainer un ami
-                    </div>
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
+          {/* Promotions removed per client request */}
         </div>
       </div>
     </div>
