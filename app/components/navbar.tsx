@@ -7,10 +7,10 @@ export default function NavBar() {
         <a href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
           <Image
             src="/static/logobird-large.png"
-            className="w-36 h-auto md:w-48 lg:w-56"
-            alt="Freebird Logo"
-            width={280}
-            height={80}
+            className="w-44 h-auto md:w-60 lg:w-56"
+            alt="Freebird Airways Logo"
+            width={320}
+            height={96}
           />
         </a>
         <div className="flex items-center md:order-2 space-x-2 md:space-x-4 rtl:space-x-reverse">
@@ -257,6 +257,14 @@ export default function NavBar() {
                 className="block py-2 px-3 md:p-0 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
               >
                 Carrière
+              </a>
+            </li>
+            <li>
+              <a
+                href="/reservation"
+                className="block py-2 px-3 md:p-0 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+              >
+                Réservation
               </a>
             </li>
           </ul>

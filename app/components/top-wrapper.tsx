@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export default function TopWrapper() {
   return (
-    <div className="relative pb-0 lg:pb-16 -mt-[100px] hidden lg:block">
+    <div className="relative pb-0 lg:pb-16 -mt-[100px] hidden lg:block overflow-hidden">
       <div className="h-[300px] hidden lg:block" />
       <div className="relative lg:absolute top-0 left-0 w-full h-full z-0">
         <Image
